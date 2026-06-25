@@ -1,128 +1,148 @@
-## About MeshCore
+# MeshCore CZ
 
-MeshCore is a lightweight, portable C++ library that enables multi-hop packet routing for embedded projects using LoRa and other packet radios. It is designed for developers who want to create resilient, decentralized communication networks that work without the internet.
+> **English summary** — This is a Czech community fork of [MeshCore](https://github.com/ripplebiz/MeshCore), built on repeater firmware **v1.16.0**. It is *not* a new protocol or a separate network: it is plain MeshCore with a small, openly maintained set of Czech defaults and fixes (radio settings for the CZ Narrow band, regional flood scopes, advert metadata). Upstream documentation, clients, and the getting-started guide live at [meshcore.io](https://meshcore.io) and [docs.meshcore.io](https://docs.meshcore.io). The rest of this README — describing the goal and the CZ-specific options — is in Czech.
 
-## 🔍 What is MeshCore?
+---
 
-MeshCore now supports a range of LoRa devices, allowing for easy flashing without the need to compile firmware manually. Users can flash a pre-built binary using tools like Adafruit ESPTool and interact with the network through a serial console.
-MeshCore provides the ability to create wireless mesh networks, similar to Meshtastic and Reticulum but with a focus on lightweight multi-hop packet routing for embedded projects. Unlike Meshtastic, which is tailored for casual LoRa communication, or Reticulum, which offers advanced networking, MeshCore balances simplicity with scalability, making it ideal for custom embedded solutions, where devices (nodes) can communicate over long distances by relaying messages through intermediate nodes. This is especially useful in off-grid, emergency, or tactical situations where traditional communication infrastructure is unavailable.
+# Jednotný český firmware pro repeatery
 
-## ⚡ Key Features
+## Problém dnes
 
-* Multi-Hop Packet Routing
-  * Devices can forward messages across multiple nodes, extending range beyond a single radio's reach.
-  * Supports up to a configurable number of hops to balance network efficiency and prevent excessive traffic.
-  * Nodes use fixed roles where "Companion" nodes are not repeating messages at all to prevent adverse routing paths from being used.
-* Supports LoRa Radios – Works with Heltec, RAK Wireless, and other LoRa-based hardware.
-* Decentralized & Resilient – No central server or internet required; the network is self-healing.
-* Low Power Consumption – Ideal for battery-powered or solar-powered devices.
-* Simple to Deploy – Pre-built example applications make it easy to get started.
+Každý repeater může běžet na jiné verzi firmware, s jinými opravami a jiným nastavením.
 
-## 🎯 What Can You Use MeshCore For?
+Když se objeví chyba nebo nová užitečná funkce, každý ji řeší zvlášť. Často také není jasné, která verze je ověřená a která pouze experimentální.
 
-* Off-Grid Communication: Stay connected even in remote areas.
-* Emergency Response & Disaster Recovery: Set up instant networks where infrastructure is down.
-* Outdoor Activities: Hiking, camping, and adventure racing communication.
-* Tactical & Security Applications: Military, law enforcement, and private security use cases.
-* IoT & Sensor Networks: Collect data from remote sensors and relay it back to a central location.
+## Návrh
 
-## 🚀 How to Get Started
+Vytvořit společný český firmware builder založený na oficiálním MeshCore firmware.
 
-- Watch the [MeshCore QuickStart Playlist](https://www.youtube.com/watch?v=iaFltojJrAc&list=PLshzThxhw4O4WU_iZo3NmNZOv6KMrUuF9) by The Comms Channel
-- Watch the [MeshCore Technical Presentation](https://www.youtube.com/watch?v=OwmkVkZQTf4) by Liam Cottle.
-- Read through our [Frequently Asked Questions](./docs/faq.md) and [Documentation](https://docs.meshcore.io).
-- Flash the MeshCore firmware on a supported device.
-- Connect with a supported client.
+Builder by automaticky připravoval známé a přehledně označené verze pro repeatery v české síti.
 
-For developers:
+Nešlo by o nový protokol ani oddělenou síť. Pořád by to byl MeshCore, pouze se společně spravovanými úpravami.
 
-- Install [PlatformIO](https://docs.platformio.org) in [Visual Studio Code](https://code.visualstudio.com).
-- Clone and open the MeshCore repository in Visual Studio Code.
-- See the example applications you can modify and run:
-  - [Companion Radio](./examples/companion_radio) - For use with an external chat app, over BLE, USB or Wi-Fi.
-  - [KISS Modem](./examples/kiss_modem) - Serial KISS protocol bridge for host applications. ([protocol docs](./docs/kiss_modem_protocol.md))
-  - [Simple Repeater](./examples/simple_repeater) - Extends network coverage by relaying messages.
-  - [Simple Room Server](./examples/simple_room_server) - A simple BBS server for shared Posts.
-  - [Simple Secure Chat](./examples/simple_secure_chat) - Secure terminal based text communication between devices.
-  - [Simple Sensor](./examples/simple_sensor) - Remote sensor node with telemetry and alerting.
+## Co obsahuje na začátku
 
-The Simple Secure Chat example can be interacted with through the Serial Monitor in Visual Studio Code, or with a Serial USB Terminal on Android.
+První verze je záměrně minimální:
 
-## ⚡️ MeshCore Flasher
+* metadata o repeateru (advert metadata),
+* vybrané opravy známých chyb,
+* společné radiové výchozí hodnoty pro českou síť (CZ Narrow),
+* regionální flood scope (`cz` a kraje),
+* jasný seznam změn proti oficiální verzi.
 
-We have prebuilt firmware ready to flash on supported devices.
+## Stabilní a testovací verze
 
-- Launch https://meshcore.io/flasher
-- Select a supported device
-- Flash one of the firmware types:
-  - Companion, Repeater or Room Server
-- Once flashing is complete, you can connect with one of the MeshCore clients below.
+Cílem je vydávat více variant:
 
-## 📱 MeshCore Clients
+**Stable** — doporučená verze pro dlouhodobý provoz repeateru.
 
-**Companion Firmware**
+**Testing** — verze s novou opravou nebo funkcí, kterou dobrovolně otestuje několik provozovatelů.
 
-The companion firmware can be connected to via BLE, USB or Wi-Fi depending on the firmware type you flashed.
+Díky tomu nebudeme testovat náhodně. Budeme vědět, které repeatery používají konkrétní verzi a jaké jsou výsledky.
 
-- Web: https://app.meshcore.nz
-- Android: https://play.google.com/store/apps/details?id=com.liamcottle.meshcore.android
-- iOS: https://apps.apple.com/us/app/meshcore/id6742354151?platform=iphone
-- NodeJS: https://github.com/liamcottle/meshcore.js
-- Python: https://github.com/fdlamotte/meshcore-cli
+## Proč je to užitečné pro provozovatele
 
-**Repeater and Room Server Firmware**
+* nemusí si firmware sestavovat sám,
+* jednoduše pozná doporučenou verzi,
+* dostane opravy, na které by jinak čekal,
+* může se dobrovolně zapojit do testování,
+* při problému bude jasné, co na repeateru běží,
+* bude možné snadno přejít na jinou nebo oficiální verzi.
 
-The repeater and room server firmware can be set up via USB in the web config tool.
+## Přínos pro celou síť
 
-- https://config.meshcore.io
+Když budeme nové verze nasazovat koordinovaně, můžeme změny nejdříve ověřit na několika repeaterech a až potom je doporučit ostatním.
 
-They can also be managed via LoRa in the mobile app by using the Remote Management feature.
+To znamená méně náhodných úprav, rychlejší hledání problémů a lepší přehled o stavu české sítě.
 
-## 🛠 Hardware Compatibility
+## Hlavní myšlenka
 
-MeshCore is designed for devices listed in the [MeshCore Flasher](https://meshcore.io/flasher)
+> Nechceme, aby všechny repeatery musely běžet na jednom povinném firmware. Chceme mít jeden důvěryhodný a koordinovaný způsob, jak připravovat stabilní i testovací verze pro ty, kteří je chtějí používat.
 
-## 📜 License
+---
 
-MeshCore is open-source software released under the MIT License. You are free to use, modify, and distribute it for personal and commercial projects.
+# Technický přehled změn
 
-## Contributing
+## Radiové výchozí hodnoty (CZ Narrow)
 
-Please submit PR's using 'dev' as the base branch!
-For minor changes just submit your PR and we'll try to review it, but for anything more 'impactful' please open an Issue first and start a discussion. It is better to sound out what it is you want to achieve first, and try to come to a consensus on what the best approach is, especially when it impacts the structure or architecture of this codebase.
+Výchozí build flagy v `platformio.ini` (sekce `[arduino_base]`):
 
-Here are some general principles you should try to adhere to:
-* Keep it simple. Please, don't think like a high-level lang programmer. Think embedded, and keep code concise, without any unnecessary layers.
-* No dynamic memory allocation, except during setup/begin functions.
-* Use the same brace and indenting style that's in the core source modules. (A .clang-format is probably going to be added soon, but please do NOT retroactively re-format existing code. This just creates unnecessary diffs that make finding problems harder)
+| Nastavení | Hodnota |
+|-----------|---------|
+| Frekvence | 869.432 MHz |
+| Šířka pásma | 62.5 kHz |
+| Spreading factor | 7 |
+| Coding rate | 4/5 |
+| Vysílací výkon | 22 dBm |
+| Kódování cesty | 2 bajty (`DEFAULT_PATH_HASH_MODE=1`) |
+| Duty cycle | 10 % (`DEFAULT_AIRTIME_FACTOR=9.0`) |
+| Výchozí flood scope | `cz` |
 
-Help us prioritize! Please react with thumbs-up to issues/PRs you care about most. We look at reaction counts when planning work.
+Jednotlivé desky mohou ve svém `variants/*/platformio.ini` přepsat `LORA_TX_POWER` nebo radiové piny.
 
-### Running unit tests
+## Regionální presety
 
-To run unit tests, run the following command:
+Při `MESHCORE_CZ_REGION_PRESET=1` (ve výchozím stavu zapnuto) repeatery, room servery i senzory při prvním startu vytvoří strom regionů, pokud ještě neexistuje soubor `/regions2`:
 
-```bash
-pio test --environment native --verbose
+- **`cz`** — celostátní scope; flood povolen
+- **14 krajů** — potomci `cz`, flood ve výchozím stavu zakázán
+
+Kraje: `cz-pha`, `cz-stc`, `cz-jhc`, `cz-plz`, `cz-kvk`, `cz-ulk`, `cz-lbk`, `cz-hkk`, `cz-pak`, `cz-vys`, `cz-jmk`, `cz-olk`, `cz-zlk`, `cz-msk`.
+
+Preferovaný flood scope je `*, cz` (nescopované zprávy a provoz se scope `cz`). Krajské regiony jsou definované, ale neforwardují se, dokud je výslovně nepovolíte.
+
+### Volitelný domovský kraj (subregion)
+
+Kraj lze nastavit při buildu — tím se pro daný region povolí flood a region se použije jako domovský:
+
+```ini
+-D MESHCORE_CZ_SUBREGION=\"cz-ulk\"
 ```
 
-## Road-Map / To-Do
+Přidejte do `variants/*/platformio.ini` nebo do lokálního `platformio.local.ini` (gitignored), například:
 
-There are a number of fairly major features in the pipeline, with no particular time-frames attached yet. In very rough chronological order:
-- [X] Companion radio: UI redesign
-- [X] Repeater + Room Server: add ACL's (like Sensor Node has)
-- [X] Standardise Bridge mode for repeaters
-- [ ] Repeater/Bridge: Standardise the Transport Codes for zoning/filtering
-- [X] Core + Repeater: enhanced zero-hop neighbour discovery
-- [ ] Core: round-trip manual path support
-- [ ] Companion + Apps: support for multiple sub-meshes (and 'off-grid' client repeat mode)
-- [ ] Core + Apps: support for LZW message compression
-- [ ] Core: dynamic CR (Coding Rate) for weak vs strong hops
-- [ ] Core: new framework for hosting multiple virtual nodes on one physical device
-- [ ] V2 protocol spec: discussion and consensus around V2 packet protocol, including path hashes, new encryption specs, etc
+```ini
+[env:SenseCap_Solar_repeater]
+build_flags =
+  -D MESHCORE_CZ_SUBREGION=\"cz-ulk\"
+```
 
-## 📞 Get Support
+Zařízení, která už mají soubor `/regions2`, si ponechají uloženou konfiguraci; pro uplatnění presetů přeflashujte nebo upravte regiony přes CLI.
 
-- Report bugs and request features on the [GitHub Issues](https://github.com/ripplebiz/MeshCore/issues) page.
-- Find additional guides and components on [my site](https://buymeacoffee.com/ripplebiz).
-- Join [MeshCore Discord](https://meshcore.gg) to chat with the developers and get help from the community.
+## Sestavení (build)
+
+Vyžaduje [PlatformIO](https://platformio.org/). Výpis prostředí:
+
+```bash
+pio project config
+```
+
+Build a upload příkladu (název prostředí podle desky):
+
+```bash
+pio run -e SenseCap_Solar_repeater -t upload
+```
+
+### Lokální přepisy
+
+Pro nastavení specifická pro konkrétní stroj vytvořte `platformio.local.ini` (necommituje se). Globální sekce `[env]` přidá flagy do všech prostředí, takže není nutné měnit `platformio.ini`, např. nRF52 debug:
+
+```ini
+[env]
+build_flags =
+  -D CFG_DEBUG=0
+```
+
+## Rozložení větví
+
+| Větev | Účel |
+|-------|------|
+| `repeater-1.16.0-cz` | Integrační větev CZ firmware (cíl PR) |
+| `cz-core` | Radiové výchozí hodnoty a regionální presety |
+| `cz-advert-features` | CLI pro advert metadata |
+
+Základní tag: `repeater-v1.16.0`.
+
+## Licence
+
+Stejná jako upstream MeshCore — licence MIT.
